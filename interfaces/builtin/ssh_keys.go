@@ -19,7 +19,7 @@
 
 package builtin
 
-const sshKeysSummary = `allows reading ssh user configuration and keys`
+const sshKeysSummary = `allows reading ssh user configuration and keys and accessing the GNOME keyring SSH agent`
 
 const sshKeysBaseDeclarationSlots = `
   ssh-keys:
@@ -35,12 +35,13 @@ const sshKeysBaseDeclarationSlots = `
 // namespace either.
 const sshKeysConnectedPlugAppArmor = `
 # Description: Can read ssh user configuration as well as public and private
-# keys.
+# keys, and can access the user's GNOME keyring SSH agent.
 
 /usr/bin/ssh ixr,
 /etc/ssh/ssh_config r,
 /etc/ssh/ssh_config.d/{,**} r,
 owner @{HOME}/.ssh/{,**} r,
+owner /{,var/}run/user/[0-9]*/keyring/ssh rw,
 `
 
 func init() {

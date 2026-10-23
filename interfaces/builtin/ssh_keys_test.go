@@ -80,13 +80,14 @@ func (s *SshKeysInterfaceSuite) TestAppArmorSpec(c *C) {
 	c.Assert(spec.SecurityTags(), DeepEquals, []string{"snap.consumer.app"})
 	c.Assert(spec.SnippetForTag("snap.consumer.app"), testutil.Contains, `/etc/ssh/ssh_config.d/{,**} r,`)
 	c.Assert(spec.SnippetForTag("snap.consumer.app"), testutil.Contains, `owner @{HOME}/.ssh/{,**} r,`)
+	c.Check(spec.SnippetForTag("snap.consumer.app"), testutil.Contains, `owner /{,var/}run/user/[0-9]*/keyring/ssh rw,`)
 }
 
 func (s *SshKeysInterfaceSuite) TestStaticInfo(c *C) {
 	si := interfaces.StaticInfoOf(s.iface)
 	c.Assert(si.ImplicitOnCore, Equals, true)
 	c.Assert(si.ImplicitOnClassic, Equals, true)
-	c.Assert(si.Summary, Equals, `allows reading ssh user configuration and keys`)
+	c.Assert(si.Summary, Equals, `allows reading ssh user configuration and keys and accessing the GNOME keyring SSH agent`)
 	c.Assert(si.BaseDeclarationSlots, testutil.Contains, "ssh-keys")
 }
 
